@@ -1,0 +1,14 @@
+[Unit]
+Description=OpenBMP Server (Monitoring Protocol (OpenBMP) Collection Framework)
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+Restart=on-abnormal
+RemainAfterExit=yes
+EnvironmentFile=/etc/default/openbmpd
+ExecStart=/usr/bin/openbmpd -l $LOGFILE -pid $PID_FILE -c $CONFIG_FILE
+
+[Install]
+WantedBy=multi-user.target
