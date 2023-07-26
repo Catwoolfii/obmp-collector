@@ -1,0 +1,4 @@
+LOGFILE=/var/log/openbmpd.log
+MYHOSTNAME=$(uname -n)
+CONFIG_FILE=/etc/openbmp/openbmpd.conf
+PID_FILE=/var/run/openbmpd.pid
