@@ -5,58 +5,15 @@ See the various requirements and suggested system configurations at [Requirement
 Openbmp is built and installed using 'cmake' to build the makefiles. 
 
 
-All Platforms (Ubuntu, CentOS, etc.)
-------------------------------------
-
-> #### YOU MUST INSTALL DEPENDS BEFORE BUILDING librdkafka and libyaml-cpp
-
-### Install librdkafka development and runtime libraries
-
-See [librdkafka](https://github.com/edenhill/librdkafka) for detailed instructions on how to install.  
-
-```
-git clone https://github.com/edenhill/librdkafka.git
-cd librdkafka
-./configure
-make
-sudo make install
-```
-
-### Install libyaml-cpp development and runtime libraries
-
-See [yaml-cpp](https://github.com/jbeder/yaml-cpp) for detailed instructions on how to install.
-
-```
-git clone https://github.com/jbeder/yaml-cpp.git
-cd yaml-cpp
-
-
-# git checkout yaml-cpp-0.6.2
-
-# If on Centos6 
-# git checkout yaml-cpp-0.5.3
-
-# IF on CentOS6/RHEL6 - you might run into an issue about date_time boost lib. This issue
-#    is specific to cmake on centos6/rhel6.   If you run into this issue, you can
-#    safely run the below to resolve the issue. 
-#sed -i '116,117 s/^/#/' ../CMakeLists.txt
-
-mkdir build
-cd build
-cmake -DBUILD_SHARED_LIBS=OFF ..
-make
-sudo make install
-```
-
-Ubuntu 14.04
+Debian 11
 ------------
-### Install Ubuntu 14.04
-Install standard Ubuntu 14.04/Trusty server image [Ubuntu Download](http://www.ubuntu.com/download)
+### Install Debian 11
+Install standard Debian 11/bullseye server image [Debian Download](https://www.debian.org/download)
 
 ### Install the dependancies
 
 ``` 
-sudo apt-get install gcc g++ libboost-dev cmake zlib1g-dev libssl1.0.0 libsasl2-2 libssl-dev libsasl2-dev 
+sudo apt-get install cmake gcc g++ lib{boost-dev,lz4-dev,rdkafka-dev,sasl2-dev,ssl-dev,yaml-cpp-dev,zstd-dev} zlib1g-dev
 ```
 
 RHEL7/CentOS7
@@ -90,28 +47,30 @@ Compiling Source (All Platforms)
 
 Do the following: 
 
-    git clone https://github.com/OpenBMP/openbmp.git
-    cd openbmp
-    mkdir build
-    cd build
-    cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr ../  
-    make
+    wget clone https://github.com/Catwoolfii/obmp-collector/archive/refs/heads/main.tar.gz
+    sudo tar zxvf main.tar.gz
+    cd obmp-collector-main
+    sudo mkdir -p build && cd build
+    sudo cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr ../  
+    sudo make -j 4
 
 ### Example output
 ```
-localadmin@toolServer:/ws/ws-openbmp/openbmp/build$ cmake ../
--- The C compiler identification is GNU 4.8.2
--- The CXX compiler identification is GNU 4.8.2
--- Check for working C compiler: /usr/bin/cc
--- Check for working C compiler: /usr/bin/cc -- works
+localadmin@toolServer:/ws/ws-openbmp/openbmp/build$ sudo cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr ../
+-- The C compiler identification is GNU 10.2.1
+-- The CXX compiler identification is GNU 10.2.1
 -- Detecting C compiler ABI info
 -- Detecting C compiler ABI info - done
--- Check for working CXX compiler: /usr/bin/c++
--- Check for working CXX compiler: /usr/bin/c++ -- works
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
 -- Detecting CXX compiler ABI info
 -- Detecting CXX compiler ABI info - done
--- Boost version: 1.54.0
--- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libssl.so;/usr/lib/x86_64-linux-gnu/libcrypto.so (found suitable version "1.0.1f", minimum required is "1")
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Found Boost: /usr/lib/x86_64-linux-gnu/cmake/Boost-1.74.0/BoostConfig.cmake (found suitable version "1.74.0", minimum required is "1.41.0")
+-- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found suitable version "1.1.1n", minimum required is "1")
 -- Performing Test SUPPORTS_STD_CXX11
 -- Performing Test SUPPORTS_STD_CXX11 - Success
 -- Performing Test SUPPORTS_STD_CXX01
@@ -120,31 +79,34 @@ localadmin@toolServer:/ws/ws-openbmp/openbmp/build$ cmake ../
 -- Generating done
 -- Build files have been written to: /ws/ws-openbmp/openbmp/build
 
-localadmin@toolServer:/ws/ws-openbmp/openbmp/build$ make
+localadmin@toolServer:/ws/ws-openbmp/openbmp/build$ sudo make
 Scanning dependencies of target openbmpd
-[  5%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/bmp/BMPListener.cpp.o
-[ 10%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/bmp/BMPReader.cpp.o
-[ 15%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/kafka/MsgBusImpl_kafka.cpp.o
-[ 20%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/kafka/KafkaEventCallback.cpp.o
-[ 25%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/kafka/KafkaDeliveryReportCallback.cpp.o
-[ 30%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/openbmp.cpp.o
-[ 35%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/bmp/parseBMP.cpp.o
+[  8%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/bmp/BMPReader.cpp.o
+[  8%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/bmp/BMPListener.cpp.o
+[ 12%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/kafka/MsgBusImpl_kafka.cpp.o
+[ 16%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/kafka/KafkaEventCallback.cpp.o
+[ 20%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/kafka/KafkaDeliveryReportCallback.cpp.o
+[ 24%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/kafka/KafkaTopicSelector.cpp.o
+[ 28%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/kafka/KafkaPeerPartitionerCallback.cpp.o
+[ 32%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/openbmp.cpp.o
+[ 36%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/bmp/parseBMP.cpp.o
 [ 40%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/md5.cpp.o
-[ 45%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/Logger.cpp.o
-[ 50%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/client_thread.cpp.o
-[ 55%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/bgp/parseBGP.cpp.o
+[ 44%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/Logger.cpp.o
+[ 48%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/Config.cpp.o
+[ 52%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/client_thread.cpp.o
+[ 56%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/bgp/parseBGP.cpp.o
 [ 60%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/bgp/NotificationMsg.cpp.o
-[ 65%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/bgp/OpenMsg.cpp.o
-[ 70%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/bgp/UpdateMsg.cpp.o
-[ 75%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/bgp/MPReachAttr.cpp.o
-[ 80%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/bgp/MPUnReachAttr.cpp.o
-[ 85%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/bgp/ExtCommunity.cpp.o
-[ 90%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/bgp/linkstate/MPLinkState.cpp.o
-[ 95%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/bgp/linkstate/MPLinkStateAttr.cpp.o
-[100%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/kafka/KafkaPeerPartitionerCallback.cpp.o
-Linking CXX executable openbmpd
+[ 64%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/bgp/OpenMsg.cpp.o
+[ 68%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/bgp/UpdateMsg.cpp.o
+[ 72%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/bgp/MPReachAttr.cpp.o
+[ 76%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/bgp/MPUnReachAttr.cpp.o
+[ 80%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/bgp/ExtCommunity.cpp.o
+[ 84%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/bgp/AddPathDataContainer.cpp.o
+[ 88%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/bgp/EVPN.cpp.o
+[ 92%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/bgp/linkstate/MPLinkState.cpp.o
+[ 96%] Building CXX object Server/CMakeFiles/openbmpd.dir/src/bgp/linkstate/MPLinkStateAttr.cpp.o
+[100%] Linking CXX executable openbmpd
 [100%] Built target openbmpd
-
 ```
 
 Binary will be located under **Server/**
@@ -163,8 +125,8 @@ ubuntu@bmp-dev:~/test/openbmp/build$ sudo make install
 Install the project...
 -- Install configuration: ""
 -- Installing: /usr/bin/openbmpd
--- Installing: /etc/init/openbmpd.conf
+-- Installing: /etc/openbmp/openbmpd.conf
 -- Installing: /etc/default/openbmpd
--- Installing: /etc/init.d/openbmpd
+-- Installing: /lib/systemd/system/openbmpd.service
 -- Installing: /etc/logrotate.d/openbmpd
 ```
