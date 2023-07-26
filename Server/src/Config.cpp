@@ -50,6 +50,10 @@ Config::Config() {
     msg_send_max_retry  = 2;
     retry_backoff_ms    = 100;
     compression         = "snappy";
+    security_protocol   = "PLAINTEXT";
+    sasl_mechanisms     = "PLAIN";
+    sasl_username       = "";
+    sasl_password       = "";
     max_concurrent_routers = 2;
     initial_router_time = 60;
     calculate_baseline  = true;
@@ -554,6 +558,59 @@ void Config::parseKafka(const YAML::Node &node) {
         }
     }
 
+    if (node["security.protocol"]  && 
+        node["security.protocol"].Type() == YAML::NodeType::Scalar) {
+        try {
+            security_protocol = node["security.protocol"].as<std::string>();
+
+            if (security_protocol != "PLAINTEXT" && security_protocol != "SSL" && 
+                security_protocol != "SASL_PLAINTEXT" && security_protocol != "SASL_SSL")
+               throw "invalid value for security_protocol, should be one of PLAINTEXT,"
+			" SSL, SASL_PLAINTEXT, or SASL_SSL";
+            if (debug_general)
+                   std::cout << "   Config: Security protocol : " << 
+                                security_protocol << std::endl;
+
+        } catch (YAML::TypedBadConversion<std::string> err) {
+                printWarning("security_protocol is not of type string", 
+				node["security.protocol"]);
+        }
+    }
+
+    if (node["sasl.mechanisms"]  && 
+        node["sasl.mechanisms"].Type() == YAML::NodeType::Scalar) {
+        try {
+            sasl_mechanisms = node["sasl.mechanisms"].as<std::string>();
+
+            if (sasl_mechanisms != "GSSAPI" && sasl_mechanisms != "PLAIN" && 
+                sasl_mechanisms != "SCRAM-SHA-256" && sasl_mechanisms != "SCRAM-SHA-512" &&
+	        sasl_mechanisms != "OAUTHBEARER")
+               throw "invalid value for sasl_mechanisms, should be one of GSSAPI,"
+			" PLAIN, SCRAM-SHA-256, SCRAM-SHA-512, or OAUTHBEARER";
+            if (debug_general)
+                   std::cout << "   Config: Sasl mechanisms : " << 
+                                sasl_mechanisms << std::endl;
+
+        } catch (YAML::TypedBadConversion<std::string> err) {
+                printWarning("sasl_mechanisms is not of type string", 
+				node["sasl.mechanisms"]);
+        }
+    }
+
+    if (node["sasl.username"]) {
+        sasl_username = node["sasl.username"].as<std::string>();
+
+        if (debug_general)
+            std::cout << "   Config: Sasl username : " << sasl_username << "\n";
+    }
+
+    if (node["sasl.password"]) {
+        sasl_password = node["sasl.password"].as<std::string>();
+
+        if (debug_general)
+            std::cout << "   Config: Sasl password : " << sasl_password << "\n";
+    }
+
     if (node["topics"] && node["topics"].Type() == YAML::NodeType::Map) {
         parseTopics(node["topics"]);
     }
@@ -859,4 +916,3 @@ void Config::printWarning(const std::string msg, const YAML::Node &node) {
     }
     std::cout << "WARN: " << msg << " : " << type << " = " << node.Scalar() << std::endl ;
 }
-
