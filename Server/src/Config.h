@@ -58,6 +58,10 @@ public:
     int         msg_send_max_retry;      ///< No. of times to resend failed msgs
     int         retry_backoff_ms;        ///< Backoff time before resending msgs  
     std::string compression;		 ///< Compression to use :none, gzip, snappy
+    std::string security_protocol;   ///< Protocol used to communicate with brokers. Supported: PLAINTEXT, SSL, SASL_PLAINTEXT, SASL_SSL
+    std::string sasl_mechanisms;     ///< SASL mechanism to use for authentication. Supported: GSSAPI, PLAIN, SCRAM-SHA-256, SCRAM-SHA-512, OAUTHBEARER
+    std::string sasl_username;       ///< SASL username for use with the PLAIN and SASL-SCRAM-.. mechanisms
+    std::string sasl_password;       ///< SASL password for use with the PLAIN and SASL-SCRAM-.. mechanism
     int         max_concurrent_routers;  ///<Maximum allowed routers that can connect
     int         initial_router_time;     ///<Initial time in allowing another concurrent router
     bool        calculate_baseline;      ///<Indicates if router baseline time should be calculated
