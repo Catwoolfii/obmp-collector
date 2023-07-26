@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [[ -f /lib/systemd/system/openbmpd.service ]]; then
+    if deb-systemd-helper --quiet was-enabled 'openbmpd.service'; then
+        deb-systemd-helper enable 'openbmpd.service' >/dev/null || true
+    else
+        deb-systemd-helper update-state 'openbmpd.service' >/dev/null || true
+    fi
+fi
