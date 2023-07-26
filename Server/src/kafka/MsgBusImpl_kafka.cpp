@@ -218,6 +218,35 @@ void msgBus_kafka::connect() {
         throw "ERROR: Failed to configure kafka compression";
     }
 
+
+    // security protocol
+    value = cfg->security_protocol;
+    if (conf->set("security.protocol", value, errstr) != RdKafka::Conf::CONF_OK) {
+        LOG_ERR("Failed to configure %s security_protocol for kafka: %s.", value.c_str(), errstr.c_str());
+        throw "ERROR: Failed to configure kafka security protocol";
+    }
+
+    // sasl mechanisms
+    value = cfg->sasl_mechanisms;
+    if (conf->set("sasl.mechanisms", value, errstr) != RdKafka::Conf::CONF_OK) {
+        LOG_ERR("Failed to configure %s sasl_mechanisms for kafka: %s.", value.c_str(), errstr.c_str());
+        throw "ERROR: Failed to configure kafka sasl mechanisms";
+    }
+
+    // sasl username
+    value = cfg->sasl_username;
+    if (conf->set("sasl.username", value, errstr) != RdKafka::Conf::CONF_OK) {
+        LOG_ERR("Failed to configure %s sasl_username for kafka: %s.", value.c_str(), errstr.c_str());
+        throw "ERROR: Failed to configure kafka sasl username";
+    }
+
+    // sasl password
+    value = cfg->sasl_password;
+    if (conf->set("sasl.password", value, errstr) != RdKafka::Conf::CONF_OK) {
+        LOG_ERR("Failed to configure %s sasl_password for kafka: %s.", value.c_str(), errstr.c_str());
+        throw "ERROR: Failed to configure kafka sasl password";
+    }
+
     // broker list
     if (conf->set("metadata.broker.list", cfg->kafka_brokers, errstr) != RdKafka::Conf::CONF_OK) {
         LOG_ERR("Failed to configure broker list for kafka: %s", errstr.c_str());
